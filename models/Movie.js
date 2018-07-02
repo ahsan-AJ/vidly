@@ -39,4 +39,5 @@ function validateMovie(movie) {
     return Joi.validate(movie, schema);
 }
 
-module.exports = mongoose.model('Movie', movieSchema);
+exports.Movie = mongoose.model('Movie', movieSchema);
+exports.validateMovie = validateMovie;

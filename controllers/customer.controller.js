@@ -92,7 +92,7 @@ async function deleteCustomer(req, res, next) {
     const customer = await Customer.findByIdAndRemove(id);
     if (!customer) failure(res, 404, 'Genre not found')
 
-    success(res, 200, { message: 'customer deleted', customer: customer });
+    return success(res, 200, { message: 'customer deleted', customer: customer });
 }
 
 module.exports = {

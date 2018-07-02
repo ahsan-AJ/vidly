@@ -3,7 +3,7 @@ const Joi = require('joi');
 const success = statusHelper.sendSuccessStatus;
 const failure = statusHelper.sendErrorStatus;
 
-const Genre = require('../models/Genre');
+const { Genre } = require('../models/Genre');
 
 
 function _validateGenres(genre) {
