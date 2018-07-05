@@ -1,8 +1,12 @@
-const { Rental, validateRentals } = require('../models/MovieRental');
+const { Rental, validateRentals } = require('../models/Rental');
 const { Movie } = require('../models/Movie');
-const { Customer } = require('../models/Customer');
+const Customer = require('../models/Customer');
 const status = require('../helpers/statuses');
+const Fawn = require('fawn');
+const mongoose = require('mongoose');
 
+
+Fawn.init(mongoose); // initialize Fawn with mongoose object
 const success = status.sendSuccessStatus;
 const failure = status.sendErrorStatus;
 
@@ -53,18 +57,35 @@ async function addRental(req, res, next) {
                 dailyRentalRate: movie.dailyRentalRate
             }
         })
-        // save the rental 
-    let result = await rental.save();
+        // save the rental  using 2pc 
+        // let result = await rental.save();
+    try {
 
+        // For atomic transactions using two phase commits we define tasks one by one and then call
+        // run() in the end. Do not forget to use try catch 
+        new Fawn.Task()
+            .save('rentals', rental) //collection name in plural
+            .update('movies', { _id: movie._id }, {
+                $inc: { numberInStock: -1 }
+            })
+            .run();
+
+        success(res, 200, { message: 'Rental Added', data: rental });
+
+    } catch (error) {
+        failure(res, 500, 'something failed');
+    }
     // decrement movie.inStock count by 1 using 2phase commit 
 
 
-    return success(res, 200, { message: 'rental added', data: result });
+
 
 
 }
 
-async function updateRental(req, res, next) {}
+async function updateRental(req, res, next) {
+
+}
 
 async function deleteRental(req, res, next) {}
 

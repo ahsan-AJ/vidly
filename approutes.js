@@ -5,7 +5,9 @@ const routes = require('./routes/index')();
 function appRoutes(app) {
 
     app.use('/api/genres', routes.genres);
-    app.use('/api/customer', routes.customer)
+    app.use('/api/customers', routes.customer)
+    app.use('/api/movies', routes.movies);
+    app.use('/api/rentals', routes.rentals);
 }
 
 module.exports = appRoutes;

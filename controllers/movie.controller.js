@@ -45,7 +45,7 @@ async function getMovies(req, res, next) {
 async function getMovieById(req, res, next) {
     const id = req.params.id;
     const movie = await Movie.findById(id);
-    if (!genre) {
+    if (!movie) {
         return failure(res, 404, 'movie not found');
     }
     return success(res, 200, { movie: movie });
