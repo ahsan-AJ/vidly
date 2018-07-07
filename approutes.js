@@ -8,6 +8,7 @@ function appRoutes(app) {
     app.use('/api/customers', routes.customer)
     app.use('/api/movies', routes.movies);
     app.use('/api/rentals', routes.rentals);
+    app.use('/api/users', routes.users);
 }
 
 module.exports = appRoutes;
