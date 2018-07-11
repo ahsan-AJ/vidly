@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -23,6 +24,26 @@ const UserSchema = new mongoose.Schema({
     }
 
 });
+
+UserSchema.pre('save', async function(next) {
+    let user = this;
+
+    try {
+        const salt = await bcrypt.genSalt(12);
+        const hash = await bcrypt.hash(user.password, salt);
+
+        user.password = hash;
+        next();
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+
+})
+
+UserSchema.methods.comparePassword = function(candidatePassword) {
+    return bcrypt.compare(candidatePassword.this.password);
+}
 
 function validateUser(user) {
     const schema = {
