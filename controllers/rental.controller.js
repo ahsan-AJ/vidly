@@ -61,8 +61,8 @@ async function addRental(req, res, next) {
         // let result = await rental.save();
     try {
 
-        // For atomic transactions using two phase commits we define tasks one by one and then call
-        // run() in the end. Do not forget to use try catch 
+        // For atomic transactions using two phase commits we define mongoose methods on documents one by one 
+        //and then call run() in the end. Do not forget to use try catch 
         new Fawn.Task()
             .save('rentals', rental) //collection name in plural
             .update('movies', { _id: movie._id }, {

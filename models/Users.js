@@ -14,19 +14,29 @@ const UserSchema = new mongoose.Schema({
         require: true,
         minlength: 5,
         maxlength: 255,
-        unique: true
+       index : {
+           unique: true
+       }
     },
     password: {
         type: String,
         require: true,
         minlength: 3,
         maxlength: 1024
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum : ['male','female'],
+        default : 'male'
     }
 
 });
 
 UserSchema.pre('save', async function(next) {
     let user = this;
+    
+    if(!user.isModified('pasword')) return next(); // only hash if password is modified or new
 
     try {
         const salt = await bcrypt.genSalt(12);
@@ -41,8 +51,9 @@ UserSchema.pre('save', async function(next) {
 
 })
 
+
 UserSchema.methods.comparePassword = function(candidatePassword) {
-    return bcrypt.compare(candidatePassword.this.password);
+    return bcrypt.compare(candidatePassword,this.password);
 }
 
 function validateUser(user) {
