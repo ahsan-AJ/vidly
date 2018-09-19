@@ -13,7 +13,17 @@ function _validateGenres(genre) {
     return Joi.validate(genre, schema);
 }
 
-async function addGenre(req, res, next) {
+function asyncMiddleware(handler) {
+    return async(req, res, next) => {
+        try {
+            await handler(req, res);
+        } catch (ex) {
+            next(ex);
+        }
+    }
+}
+
+async function addGenre(req, res) {
     console.log(req.body);
     const name = req.body.name;
 

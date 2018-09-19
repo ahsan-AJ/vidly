@@ -19,18 +19,27 @@ async function registerUser(req, res, next) {
     });
     try {
         await user.save();
+
+        const token = user.generateAuthToken();
+
         const _json = _.pick(user, ["_id", "name", "email"]);
+
+        res.header('X-Auth-Token', `Bearer ${token}`);
         return success(res, 200, { data: _json })
     } catch (error) {
         return failure(res, 500, { error: error })
     }
 }
 
-function login(req, res, next) {}
+async function currentUser(req, res, next) {
+    const id = req.user._id;
+    const user = await User.findById(id).select('-password');
+    return success(res, 200, { user: user });
+}
 
 
 
 module.exports = {
     registerUser: registerUser,
-    login: login
+    current: currentUser
 }

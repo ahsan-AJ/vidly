@@ -1,6 +1,8 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -14,9 +16,9 @@ const UserSchema = new mongoose.Schema({
         require: true,
         minlength: 5,
         maxlength: 255,
-       index : {
-           unique: true
-       }
+        index: {
+            unique: true
+        }
     },
     password: {
         type: String,
@@ -27,16 +29,19 @@ const UserSchema = new mongoose.Schema({
     gender: {
         type: String,
         required: true,
-        enum : ['male','female'],
-        default : 'male'
+        enum: ['male', 'female'],
+        default: 'male'
+    },
+    isAdmin: {
+        type: Boolean
     }
 
 });
 
 UserSchema.pre('save', async function(next) {
     let user = this;
-    
-    if(!user.isModified('pasword')) return next(); // only hash if password is modified or new
+
+    if (!user.isModified('pasword')) return next(); // only hash if password is modified or new
 
     try {
         const salt = await bcrypt.genSalt(12);
@@ -53,7 +58,12 @@ UserSchema.pre('save', async function(next) {
 
 
 UserSchema.methods.comparePassword = function(candidatePassword) {
-    return bcrypt.compare(candidatePassword,this.password);
+    return bcrypt.compare(candidatePassword, this.password);
+}
+
+UserSchema.methods.generateAuthToken = function() {
+    const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, config.get('jwtPrivateKey'));
+    return token;
 }
 
 function validateUser(user) {
