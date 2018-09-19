@@ -2,6 +2,7 @@ const statusHelper = require('../helpers/statuses');
 const Joi = require('joi');
 const success = statusHelper.sendSuccessStatus;
 const failure = statusHelper.sendErrorStatus;
+const asyncMiddleware = require('../helpers/middlewares/async');
 
 const { Genre } = require('../models/Genre');
 
@@ -13,15 +14,7 @@ function _validateGenres(genre) {
     return Joi.validate(genre, schema);
 }
 
-function asyncMiddleware(handler) {
-    return async(req, res, next) => {
-        try {
-            await handler(req, res);
-        } catch (ex) {
-            next(ex);
-        }
-    }
-}
+
 
 async function addGenre(req, res) {
     console.log(req.body);
