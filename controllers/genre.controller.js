@@ -2,7 +2,7 @@ const statusHelper = require('../helpers/statuses');
 const Joi = require('joi');
 const success = statusHelper.sendSuccessStatus;
 const failure = statusHelper.sendErrorStatus;
-const asyncMiddleware = require('../helpers/middlewares/async');
+
 
 const { Genre } = require('../models/Genre');
 
@@ -42,14 +42,14 @@ async function addGenre(req, res) {
 
 async function getGenres(req, res, next) {
 
-    try {
-        const result = await Genre.find().sort('name');
-        return success(res, 200, result);
-    } catch (error) {
-        console.log('error getting all genres');
-        console.log(error);
-        return failure(res, 401, error.message)
-    }
+    // try {
+    const result = await Genre.find().sort('name');
+    return success(res, 200, result);
+    // } catch (error) {
+    console.log('error getting all genres');
+    console.log(error);
+    return failure(res, 401, error.message)
+        // }
 }
 
 
